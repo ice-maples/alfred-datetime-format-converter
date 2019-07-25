@@ -4,6 +4,7 @@ import alfred
 import calendar
 from delorean import parse, epoch, Delorean
 from tzlocal import get_localzone
+from datetime import timedelta
 
 tz = get_localzone().zone
 
@@ -23,6 +24,12 @@ def parse_query_value(query_str):
         query_str = str(query_str).strip('"\' ')
         if query_str == 'now':
             d = Delorean(timezone=tz)
+        elif query_str.startswith('y'):
+            d = Delorean(Delorean(timezone=tz).midnight)
+            d -= timedelta(days=len(query_str))
+        elif query_str.startswith('t'):
+            d = Delorean(Delorean(timezone=tz).midnight)
+            d += timedelta(days=len(query_str) - 1)
         else:
             # Parse datetime string or timestamp
             try:
